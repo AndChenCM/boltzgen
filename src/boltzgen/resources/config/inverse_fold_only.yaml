@@ -51,6 +51,7 @@ override:
   inverse_fold: true
 
   validators: null
+  weights_only: false
 
   diffusion_process_args:
     sigma_min: 0.0004  # min noise level

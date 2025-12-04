@@ -52,3 +52,4 @@ diffusion_samples: 5
 
 override:
   validators: null
+  weights_only: false

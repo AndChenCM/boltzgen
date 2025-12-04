@@ -55,6 +55,7 @@ override:
     mask_backbone: false
 
   validators: null
+  weights_only: false
 
   step_scale_schedule:
     - step_scale: 1.8

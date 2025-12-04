@@ -1,0 +1,20 @@
+entities:
+  # Specify a designed protein chain
+  # random number between 80 and 140 of designed residues (inclusive)
+  - protein: 
+      id: A
+      sequence: 4..20
+  # Specification of the target which is extracted from a .cif file
+  - file:
+      path: gpr75_0000.cif
+      # Which chain and residues in the .cif file to use as target
+      include: 
+        - chain:
+            id: B
+      # Which regions of the target the design should or should NOT bind to
+      binding_types:
+        - chain:
+            id: B
+            binding: 80,97,100,101,165..173
+            not_binding: 292..320,42..68
+
