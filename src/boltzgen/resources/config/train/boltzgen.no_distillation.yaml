@@ -32,7 +32,7 @@ data:
     - _target_: boltzgen.task.train.data.DatasetConfig
       target_dir: ./training_data/targets
       msa_dir: ./training_data/msa
-      prob: 0.6
+      prob: 1.0
       filters:
         - _target_: boltzgen.data.filter.dynamic.size.SizeFilter
           min_chains: 1
@@ -50,100 +50,6 @@ data:
       split: ./src/boltzgen/resources/splits/validation_ids_boltz2_all.txt
       symmetry_correction: false
       val_group: "RCSB"
-
-    # AFDB Distillation Data
-    - _target_: boltzgen.task.train.data.DatasetConfig
-      manifest_path: ./training_data/afdb/afdb_manifest_foldseek_c75_confidence.json
-      target_dir: ./training_data/afdb/targets
-      msa_dir: ./training_data/afdb/msa
-      prob: 0.3
-      filters:
-        - _target_: boltzgen.data.filter.dynamic.size.SizeFilter
-          min_chains: 1
-          max_chains: 300
-        - _target_: boltzgen.data.filter.dynamic.confidence.ConfidenceFilter
-          composition_op: "AND"
-          metrics: ["confidence_score"]
-          compare_ops: ["greater"]
-          thresholds: [70]
-      sampler:
-        _target_: boltzgen.data.sample.cluster.ClusterSampler
-      cropper:
-        _target_: boltzgen.data.crop.multimer.MultimerCropper
-        neighborhood_sizes: [ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40 ]
-      symmetry_correction: true
-      override_method: "AFDB"
-      override_bfactor: true
-
-      # Protein-Ligand Distillation Data
-    - _target_: boltzgen.task.train.data.DatasetConfig
-      target_dir: ./training_data/protein_ligand/targets
-      msa_dir: ./training_data/protein_ligand/msa
-      moldir: ./training_data/protein_ligand/mols
-      prob: 0.03
-      filters:
-        - _target_: boltzgen.data.filter.dynamic.size.SizeFilter
-          min_chains: 1
-          max_chains: 300
-        - _target_: boltzgen.data.filter.dynamic.confidence.ConfidenceFilter
-          composition_op: "AND"
-          metrics: ["complex_ipde", "complex_pde", "iptm"]
-          compare_ops: ["lesser", "lesser", "greater"]
-          thresholds: [1.5, 1.5, 0.9]
-      sampler:
-        _target_: boltzgen.data.sample.cluster.ClusterSampler
-        beta_chain: 0.05
-      cropper:
-        _target_: boltzgen.data.crop.multimer.MultimerCropper
-        neighborhood_sizes: [ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40 ]
-      symmetry_correction: true
-      override_method: "BOLTZ-1"
-
-    # RNA Distillation Data
-    - _target_: boltzgen.task.train.data.DatasetConfig
-      target_dir: ./training_data/rna/targets
-      msa_dir: ./training_data/rna/msa
-      prob: 0.04
-      filters:
-        - _target_: boltzgen.data.filter.dynamic.size.SizeFilter
-          min_chains: 1
-          max_chains: 300
-        - _target_: boltzgen.data.filter.dynamic.confidence.ConfidenceFilter
-          composition_op: "OR"
-          metrics: ["complex_pde"]
-          compare_ops: ["lesser"]
-          thresholds: [2.0]
-      sampler:
-        _target_: boltzgen.data.sample.cluster.ClusterSampler
-      cropper:
-        _target_: boltzgen.data.crop.multimer.MultimerCropper
-        neighborhood_sizes: [ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40 ]
-      symmetry_correction: true
-      override_method: "BOLTZ-1"
-
-    # Protein-DNA Distillation Data
-    - _target_: boltzgen.task.train.data.DatasetConfig
-      target_dir: ./training_data/protein_dna/targets
-      msa_dir: ./training_data/protein_dna/msa
-      prob: 0.03
-      filters:
-        - _target_: boltzgen.data.filter.dynamic.size.SizeFilter
-          min_chains: 1
-          max_chains: 300
-        - _target_: boltzgen.data.filter.dynamic.confidence.ConfidenceFilter
-          composition_op: "AND"
-          metrics: ["complex_ipde", "complex_pde", "iptm"]
-          compare_ops: ["lesser", "lesser", "greater"]
-          thresholds: [1.0, 2.0, 0.7]
-      sampler:
-        _target_: boltzgen.data.sample.cluster.ClusterSampler
-        beta_chain: 0.05
-      cropper:
-        _target_: boltzgen.data.crop.multimer.MultimerCropper
-        neighborhood_sizes: [ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40 ]
-      symmetry_correction: true
-      override_method: "BOLTZ-1"
-
 
   tokenizer:
     _target_: boltzgen.data.tokenize.tokenizer.Tokenizer
@@ -512,7 +418,7 @@ model:
         transformer_post_ln: false
         activation_checkpointing: false
 
-      confidence_prediction: false
+      confidence_prediction: true
       affinity_prediction: false
       structure_prediction_training: true
       affinity_model_args:
